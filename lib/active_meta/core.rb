@@ -15,11 +15,11 @@ module ActiveMeta
           end
         end
 
-        @@attributes.each do |k,v|
+        meta.attributes.each do |k,v|
           v.apply_to_base(self)
         end
 
-        @@attributes.map(&:last).map(&:rules).flatten.map(&:class).uniq.each do |rule_class|
+        meta.attributes.map(&:last).flat_map(&:rules).map(&:class).uniq.each do |rule_class|
           self.class_eval(&rule_class) if rule_class.respond_to? :to_proc
         end
       end
@@ -32,16 +32,16 @@ module ActiveMeta
 
     def attribute(attribute, &block)
       raise ArgumentError.new('no block given') unless block_given?
-      @@attributes ||= {}
-      @@attributes[attribute] = ActiveMeta::Attribute.new(attribute, &block)
+      @attributes ||= {}
+      @attributes[attribute] = ActiveMeta::Attribute.new(attribute, &block)
     end
 
     def attributes
-      @@attributes || {}
+      @attributes || {}
     end
 
     def rules
-      @@attributes.map(&:last).map(&:rules).flatten
+      @attributes.map(&:last).flat_map(&:rules)
     end
   end
 end
