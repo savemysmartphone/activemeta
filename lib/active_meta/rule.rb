@@ -1,6 +1,7 @@
 module ActiveMeta
   class Rule
     attr_accessor :attribute, :rule_name, :arguments
+    attr_accessor :parent
 
     alias_method :name, :rule_name
     alias_method :args, :arguments

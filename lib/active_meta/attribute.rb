@@ -16,6 +16,7 @@ module ActiveMeta
     end
 
     def register_rule(rule)
+      rule.parent = self
       rules.push(rule)
     end
 
