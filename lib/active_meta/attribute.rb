@@ -23,5 +23,9 @@ module ActiveMeta
     def method_missing(name, *args, &block)
       register_rule(ActiveMeta::Rule.new(attribute, name, args))
     end
+
+    def [](arg)
+      rules.select{|rule| rule.rule_name.to_s == arg.to_s }.first
+    end
   end
 end
