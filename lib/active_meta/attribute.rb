@@ -1,6 +1,6 @@
 module ActiveMeta
   class Attribute
-    attr_accessor :attribute, :rules
+    attr_accessor :attribute, :rules, :parent
 
     def initialize(attribute, &block)
       raise ArgumentError.new("no block given for attribute #{attribute}") unless block_given?

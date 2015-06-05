@@ -34,6 +34,8 @@ module ActiveMeta
       raise ArgumentError.new('no block given') unless block_given?
       @attributes ||= {}
       @attributes[attribute] = ActiveMeta::Attribute.new(attribute, &block)
+      @attributes[attribute].parent = self
+      @attributes[attribute]
     end
 
     def attributes
