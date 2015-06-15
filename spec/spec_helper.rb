@@ -1,3 +1,8 @@
+require 'simplecov'
+SimpleCov.start do
+  add_filter '/spec/'
+end
+
 ENV['RAILS_ENV'] ||= 'test'
 
 Bundler.require
@@ -15,7 +20,6 @@ end
 
 RSpec::Matchers.define :autoload do |subclass|
   match do |klass|
-    puts "__#{klass}__#{subclass}__#{klass.autoload? subclass}"
     klass.autoload? subclass
   end
 

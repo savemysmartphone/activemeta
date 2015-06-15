@@ -25,14 +25,33 @@ describe ActiveMeta::Attribute do
       it 'should prepare an array of @rules' do
         subject.new('t'){}.rules.should == []
       end
+
       it 'should `instance_eval` its passed block' do
-        #ActiveMeta::Attribute.any_instance.stub(:instance_eval)
-        #subject.new('t'){}.should have_received(:instance_eval)
+        ActiveMeta::Attribute.any_instance.stub(:instance_eval)
+        subject.new('t'){}.should have_received(:instance_eval)
       end
     end
 
     context '#apply_to_base' do
-      it 'should `class_eval` all rules on the base class'
+      it 'should `class_eval` all rules on the base class' do
+        test_rule_class = Class.new(ActiveMeta::Rule) do
+          def to_proc; @to_proc ||= Proc.new{ args.last }; end
+        end
+        test_rules = 0.upto(4).map do |x|
+          rule = test_rule_class.new('test_apply', 1.upto(32).map{ ('a'..'z').to_a[rand * 26] }.join, x)
+          base_subject.register_rule(rule)
+          rule
+        end
+
+        test_class = Class.new do
+          class_variable_set(:@@blocks, [])
+          def self.blocks; class_variable_get(:@@blocks); end
+          def self.class_eval(&block); class_variable_set(:@@blocks, class_variable_get(:@@blocks) << block); end
+        end
+        base_subject.apply_to_base(test_class)
+        test_class.blocks.should == base_subject.rules.select(&:to_proc).map(&:to_proc)
+        test_class.blocks.map(&:call).should == [0,1,2,3,4]
+      end
     end
 
     context '#overload' do
@@ -67,7 +86,12 @@ describe ActiveMeta::Attribute do
     end
 
     context '#[]' do
-      it 'should search a rule on this attribute'
+      it 'should search a rule with the same name as the passed argument' do
+        test_rule = ActiveMeta::Rule.new('t', 'existing_rule')
+        base_subject.register_rule(test_rule)
+        base_subject[:existing_rule].should == test_rule
+        base_subject['existing_rule'].should == test_rule
+      end
 
       it 'should return nil if no matching rule is set on this attribute' do
         base_subject[:inexisting_rule].should be_nil
