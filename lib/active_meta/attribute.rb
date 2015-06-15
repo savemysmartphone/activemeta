@@ -9,6 +9,10 @@ module ActiveMeta
       instance_eval(&block)
     end
 
+    def overload(&block)
+      instance_eval(&block)
+    end
+
     def apply_to_base(base)
       rules.each do |rule|
         base.class_eval(&rule) if rule.respond_to? :to_proc

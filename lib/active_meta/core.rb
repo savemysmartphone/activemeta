@@ -33,8 +33,12 @@ module ActiveMeta
     def attribute(attribute, &block)
       raise ArgumentError.new('no block given') unless block_given?
       @attributes ||= {}
-      @attributes[attribute] = ActiveMeta::Attribute.new(attribute, &block)
-      @attributes[attribute].parent = self
+      if @attributes[attribute].present?
+        @attributes[attribute].overload(&block)
+      else
+        @attributes[attribute] = ActiveMeta::Attribute.new(attribute, &block) #FIXME: Merge, not assign
+        @attributes[attribute].parent = self
+      end
       @attributes[attribute]
     end
 
@@ -47,3 +51,4 @@ module ActiveMeta
     end
   end
 end
+
