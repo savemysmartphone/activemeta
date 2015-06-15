@@ -25,18 +25,12 @@ module ActiveMeta
       end
     end
 
-    def [](*args)
-      args = args.map(&:to_s)
-      rules.select{|rule| args.include? rule.rule_name.to_s }
-    end
-
     def attribute(attribute, &block)
-      raise ArgumentError.new('no block given') unless block_given?
       @attributes ||= {}
-      if @attributes[attribute].present?
+      if @attributes[attribute]
         @attributes[attribute].overload(&block)
       else
-        @attributes[attribute] = ActiveMeta::Attribute.new(attribute, &block) #FIXME: Merge, not assign
+        @attributes[attribute] = ActiveMeta::Attribute.new(attribute, &block)
         @attributes[attribute].parent = self
       end
       @attributes[attribute]
@@ -48,6 +42,11 @@ module ActiveMeta
 
     def rules
       @attributes.map(&:last).flat_map(&:rules)
+    end
+
+    def [](*args)
+      args = args.map(&:to_s)
+      rules.select{|rule| args.include? rule.rule_name.to_s }
     end
   end
 end
