@@ -3,13 +3,8 @@ module ActiveMeta
     attr_accessor :attribute, :rules, :parent
 
     def initialize(attribute, &block)
-      raise ArgumentError.new("no block given for attribute #{attribute}") unless block_given?
       @attribute = attribute
       @rules = []
-      instance_eval(&block)
-    end
-
-    def overload(&block)
       instance_eval(&block)
     end
 
@@ -19,13 +14,19 @@ module ActiveMeta
       end
     end
 
-    def register_rule(rule)
-      rule.parent = self
-      rules.push(rule)
+    # def method_missing(name, *args, &block)
+    #   register_rule(ActiveMeta::Rule.new(attribute, name, args))
+    # end
+
+    def overload(&block)
+      instance_eval(&block)
     end
 
-    def method_missing(name, *args, &block)
-      register_rule(ActiveMeta::Rule.new(attribute, name, args))
+    def register_rule(rule)
+      raise ArgumentError.new("no rule given for attribute #{@attribute}") unless rule.is_a? ActiveMeta::Rule
+      #rule.attribute = self.attribute
+      rule.parent = self
+      rules.push(rule)
     end
 
     def [](arg)

@@ -20,7 +20,7 @@ module ActiveMeta
         end
 
         meta.attributes.map(&:last).flat_map(&:rules).map(&:class).uniq.each do |rule_class|
-          self.class_eval(&rule_class) if rule_class.respond_to? :to_proc
+          self.class_eval(&rule_class.to_proc) if rule_class.respond_to? :to_proc
         end
       end
     end
