@@ -8,9 +8,6 @@ ENV['RAILS_ENV'] ||= 'test'
 Bundler.require
 
 require 'active_meta'
-#require 'activemeta-activerecord'
-#require 'si-api-shared'
-#require 'activesupport'
 
 RSpec.configure do |config|
   config.expect_with(:rspec) { |c| c.syntax = :should }
@@ -51,7 +48,7 @@ RSpec::Matchers.define :have_attr_accessor do |field|
   end
 end
 
-RSpec::Matchers.define :alias_method do |*fields|
+RSpec::Matchers.define :alias_its_method do |*fields|
   match do |object_instance|
     object_instance.instance_method(fields[0]) == object_instance.instance_method(fields[1])
   end
@@ -65,7 +62,7 @@ RSpec::Matchers.define :alias_method do |*fields|
   end
 
   description do
-    "alias method :#{fields[0]} to :#{fields[1]}"
+    "alias its method :#{fields[0]} to :#{fields[1]}"
   end
 end
 

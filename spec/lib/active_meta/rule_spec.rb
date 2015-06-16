@@ -6,8 +6,8 @@ describe ActiveMeta::Rule do
   it { should have_attr_accessor :arguments }
   it { should have_attr_accessor :parent }
 
-  it { should alias_method :name, :rule_name }
-  it { should alias_method :args, :arguments }
+  it { should alias_its_method :name, :rule_name }
+  it { should alias_its_method :args, :arguments }
 
   context 'instance methods' do
     context '#initialize' do
