@@ -9,16 +9,37 @@ describe ActiveMeta::Core do
     end
 
     context '#included' do
+      let(:base_rule) do
+        test_rule_class = Class.new(ActiveMeta::Rule) do
+          def to_proc
+            @to_proc ||= Proc.new{ class_variable_set(:@@blocks, class_variable_get(:@@blocks) + [['instance']]) }
+          end
+          def self.to_proc
+            @to_proc ||= Proc.new{ class_variable_set(:@@blocks, class_variable_get(:@@blocks) + [['class', meta.rules.map(&:rule_name)]]) }
+          end
+        end
+      end
+
       let(:base_subject) do
-        Module.new do
+        mod = Module.new do
           extend ActiveMeta::Core
         end
+        attr_names = 1.upto(4).map{ 1.upto(32).map{ ('a'..'z').to_a[rand * 26] }.join }
+        attr_names.each do |attr_name|
+          mod.attribute(attr_name){}
+          attr_names.each do |rule_name|
+            mod.attributes[attr_name].register_rule base_rule.new(attr_name, rule_name, rule_name)
+          end
+        end
+        mod
       end
 
       let(:base_class) do
         foo = base_subject
         Class.new do
+          class_variable_set(:@@blocks, [])
           include foo
+          def self.blocks; class_variable_get(:@@blocks); end
         end
       end
 
@@ -28,6 +49,10 @@ describe ActiveMeta::Core do
 
       it 'should add a .meta class method to the base class' do
         base_class.meta.should == base_subject
+      end
+
+      it 'should apply all attributes to the base class' do
+        base_class.blocks.select{|x| x.first == 'instance' }.length.should == 16
       end
     end
 
