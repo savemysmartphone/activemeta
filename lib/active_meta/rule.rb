@@ -14,7 +14,7 @@ module ActiveMeta
     end
 
     def opts
-      arguments.last || {}
+      arguments.last && arguments.last.is_a?(Hash) ? arguments.last : {}
     end
   end
 end
