@@ -15,12 +15,12 @@ module ActiveMeta
           end
         end
 
-        meta.attributes.each do |k,v|
+        meta.attributes.each do |_, v|
           v.apply_to_base(self)
         end
 
-        meta.attributes.map(&:last).flat_map(&:rules).map(&:class).uniq.each do |rule_class|
-          self.class_eval(&rule_class.to_proc) if rule_class.respond_to? :to_proc
+        meta.rules.map(&:class).uniq.each do |rule_class|
+          class_eval(&rule_class.to_proc) if rule_class.respond_to? :to_proc
         end
       end
     end
@@ -50,4 +50,3 @@ module ActiveMeta
     end
   end
 end
-

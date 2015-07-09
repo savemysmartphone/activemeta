@@ -1,0 +1,26 @@
+Lint/NestedMethodDefinition:
+  Enabled: false
+Lint/Void:
+  Enabled: false
+
+Metrics/AbcSize:
+  Max: 20
+Metrics/MethodLength:
+  Max: 25
+
+
+Style/SignalException:
+  EnforcedStyle: only_raise
+  SupportedStyles:
+    - only_raise
+    - semantic
+Style/SingleLineMethods:
+  Enabled: false
+Style/SpaceBeforeBlockBraces:
+  Enabled: false
+Style/SpaceInsideBlockBraces:
+  Enabled: false
+
+#FIXME
+Style/Documentation:
+  Enabled: false

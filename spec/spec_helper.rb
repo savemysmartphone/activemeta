@@ -10,8 +10,8 @@ Bundler.require
 require 'active_meta'
 
 RSpec.configure do |config|
-  config.expect_with(:rspec) { |c| c.syntax = :should }
-  config.mock_with(:rspec)   { |c| c.syntax = :should }
+  config.expect_with(:rspec) {|c| c.syntax = :should }
+  config.mock_with(:rspec)   {|c| c.syntax = :should }
   config.order = 'default'
 end
 
@@ -30,49 +30,52 @@ RSpec::Matchers.define :autoload do |subclass|
 end
 
 RSpec::Matchers.define :have_attr_accessor do |field|
-  match do |object_instance|
-    object_instance.method_defined?(field) &&
-      object_instance.method_defined?("#{field}=")
+  match do |klass|
+    klass.method_defined?(field) &&
+      klass.method_defined?("#{field}=")
   end
 
-  failure_message do |object_instance|
-    "expected attr_accessor for #{field} on #{object_instance}"
+  failure_message do |klass|
+    "expected attr_accessor for #{field} on #{klass}"
   end
 
-  failure_message_when_negated do |object_instance|
-    "expected attr_accessor for #{field} not to be defined on #{object_instance}"
-  end
-
-  description do
-    "have attr_accessor :#{field}"
-  end
-end
-
-RSpec::Matchers.define :alias_its_method do |*fields|
-  match do |object_instance|
-    object_instance.instance_method(fields[0]) == object_instance.instance_method(fields[1])
-  end
-
-  failure_message do |object_instance|
-    "expected alias for :#{fields[0]} from :#{fields[1]} to be defined on #{object_instance}"
-  end
-
-  failure_message_when_negated do |object_instance|
-    "expected alias for :#{fields[0]} from :#{fields[1]} to not be defined on #{object_instance}"
+  failure_message_when_negated do |klass|
+    "expected attr_accessor for #{field} not to be defined on #{klass}"
   end
 
   description do
-    "alias its method :#{fields[0]} to :#{fields[1]}"
+    "have attr_accessor :#{klass}"
   end
 end
 
+RSpec::Matchers.define :alias_its_method do |*f|
+  match do |klass|
+    klass.instance_method(f[0]) == klass.instance_method(f[1])
+  end
 
-module RSpec::Core::MemoizedHelpers
-  def subject
-    __memoized.fetch(:subject) do
-      __memoized[:subject] = begin
-        described = described_class || self.class.metadata.fetch(:description_args).first
-#        Class === described ? described.new : described
+  failure_message do |klass|
+    "expected alias for :#{f[0]} from :#{f[1]} to be defined on #{klass}"
+  end
+
+  failure_message_when_negated do |klass|
+    "expected alias for :#{f[0]} from :#{f[1]} to not be defined on #{klass}"
+  end
+
+  description do
+    "alias its method :#{f[0]} to :#{f[1]}"
+  end
+end
+
+module RSpec
+  module Core
+    module MemoizedHelpers
+      def subject
+        __memoized.fetch(:subject) do
+          __memoized[:subject] = begin
+            metadata = self.class.metadata
+            described_class || metadata.fetch(:description_args).first
+          end
+        end
       end
     end
   end

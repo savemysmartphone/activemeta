@@ -2,8 +2,8 @@ module ActiveMeta
   module Concern
     class << self
       def new(&block)
-        raise ArgumentError.new("no block given for concern}") unless block_given?
-        ::Module.new do
+        raise ArgumentError, 'no block given for concern' unless block_given?
+        Module.new do
           @eval_block = block
           class << self
             def extended(base)

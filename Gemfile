@@ -7,5 +7,5 @@ group :test do
   gem 'rspec-mocks'
   gem 'rspec-support'
   gem 'nyan-cat-formatter'
-  gem 'simplecov', :require => false
+  gem 'simplecov', require: false
 end

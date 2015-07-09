@@ -4,18 +4,19 @@ describe ActiveMeta::Concern do
   describe 'class methods' do
     describe '.new' do
       it 'should raise an ArgumentError when no block is passed' do
-        lambda{ subject.new }.should raise_error(ArgumentError)
+        ->{ subject.new }.should raise_error ArgumentError
       end
 
       it 'should return a new Module' do
-        subject.new(){}.should be_a_kind_of Module
+        subject.new{}.should be_a_kind_of Module
       end
 
       context 'the returned Module' do
         let(:test_proc) do
-          Proc.new do
+          proc do
             def foo; bar; end
-            def bar; "foobar"; end
+
+            def bar; 'foobar'; end
           end
         end
         let(:test_module){ subject.new(&test_proc) }
