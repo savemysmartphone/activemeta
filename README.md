@@ -1,4 +1,7 @@
 #ActiveMeta
+
+[![Circle CI](https://circleci.com/gh/savemysmartphone/activemeta/tree/master.svg?style=shield)](https://circleci.com/gh/savemysmartphone/activemeta/tree/master)
+
 ActiveMeta is a new way to write Rails models which prioritizes properties and behaviours in reusable `Rule`s.
 
 The main purpose of ActiveMeta is to store informations about your ActiveRecord models. The main question it tries to answer is "How do I know which attributes of my models are strings? Which attributes are ActiveRecord relations? Which attributes should validate uniqueness?".
