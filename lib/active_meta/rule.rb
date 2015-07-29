@@ -1,6 +1,6 @@
 module ActiveMeta
   class Rule
-    attr_accessor :attribute, :rule_name, :arguments, :parent
+    attr_accessor :attribute, :rule_name, :arguments, :parent, :contexts
 
     alias_method :name, :rule_name
     alias_method :args, :arguments
@@ -17,8 +17,28 @@ module ActiveMeta
       @arguments = arguments || []
     end
 
+    def metaclass
+      parent.metaclass
+    end
+
     def opts
       arguments.last && arguments.last.is_a?(Hash) ? arguments.last : {}
+    end
+
+    def validates_context?
+      @validates_context ||= begin
+        if contexts && contexts.length > 0
+          context_classes = contexts.map{|context| ActiveMeta::Contexts.const_get(context) }
+          last_context = context_classes[-1]
+          if context_classes[0..-2].all?{|context| !context.valid_for_rule?(self) }
+            last_context ? true : last_context.valid_for_rule?(self)
+          else
+            false
+          end
+        else
+          true
+        end
+      end
     end
   end
 end
