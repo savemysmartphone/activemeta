@@ -29,12 +29,7 @@ module ActiveMeta
       @validates_context ||= begin
         if contexts && contexts.length > 0
           context_classes = contexts.map{|context| ActiveMeta::Contexts.const_get(context) }
-          last_context = context_classes[-1]
-          if context_classes[0..-2].all?{|context| !context.valid_for_rule?(self) }
-            last_context ? true : last_context.valid_for_rule?(self)
-          else
-            false
-          end
+          context_classes.all?{|ctx| ctx.valid_for_rule?(self) }
         else
           true
         end
