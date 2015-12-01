@@ -12,11 +12,24 @@ describe ActiveMeta::Rule do
   context 'instance methods' do
     context '#initialize' do
       it 'should raise an ArgumentError if passed attribute is invalid' do
-        ->{ subject.new('Foo', 't') }.should raise_error ArgumentError
+        -> { subject.new('Foo', 't') }.should raise_error ArgumentError
       end
 
-      it 'should raise an ArgumentError if passed attribute is invalid' do
-        ->{ subject.new('t', 'Foo') }.should raise_error ArgumentError
+      it 'should raise an ArgumentError if passed rule_name is invalid' do
+        -> { subject.new('t', 'Foo') }.should raise_error ArgumentError
+      end
+
+      # http://ruby-doc.org/core-2.2.1/Regexp.html#class-Regexp-label-Anchors
+      it 'should raise an ArgumentError if a multiline string is passed as attribute' do
+        arg = "i_am_valid but_not_now".gsub(' ', "\n")
+
+        -> { subject.new(arg, 't') }.should raise_error ArgumentError
+      end
+
+      it 'should raise an ArgumentError if a multiline string is passed as rule_name' do
+        arg = "i_am_valid but_not_now".gsub(' ', "\n")
+
+        -> { subject.new('t', arg) }.should raise_error ArgumentError
       end
 
       it 'should store `attribute` as @attribute' do
