@@ -22,7 +22,7 @@ module ActiveMeta
     end
 
     def opts
-      Hash.try_convert(arguments.last) || {}
+      arguments.last && arguments.last.is_a?(Hash) ? arguments.last : {}
     end
 
     def validates_context?
