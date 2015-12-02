@@ -31,9 +31,7 @@ module ActiveMeta
     end
 
     def register_rule(rule)
-      unless rule.is_a? ActiveMeta::Rule
-        raise ArgumentError, "no rule given for attribute #{@attribute}"
-      end
+      raise ArgumentError, "no rule given for attribute #{@attribute}" unless rule.is_a? ActiveMeta::Rule
       # rule.attribute = self.attribute
       rule.contexts = @context_chain
       rule.parent = self
@@ -41,7 +39,7 @@ module ActiveMeta
     end
 
     def [](arg)
-      rules.select(&:validates_context?).find{|rule| rule.rule_name.to_s == arg.to_s }
+      rules.select(&:validates_context?).find { |rule| rule.rule_name.to_s == arg.to_s }
     end
 
   end

@@ -46,7 +46,7 @@ module ActiveMeta
 
     def [](*args)
       args = args.map(&:to_s)
-      rules.select{|rule| args.include? rule.rule_name.to_s }
+      rules.select { |rule| args.include? rule.rule_name.to_s }
     end
   end
 end
